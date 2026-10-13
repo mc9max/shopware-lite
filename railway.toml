@@ -1,0 +1,35 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+healthcheckPath = "/"
+healthcheckTimeout = 600
+numReplicas = 1
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+startCommand = ""
+
+[[volumes]]
+name = "shopware-mysql"
+mountPath = "/var/lib/mysql"
+
+[[volumes]]
+name = "shopware-media"
+mountPath = "/var/www/html/public/media"
+
+[[volumes]]
+name = "shopware-files"
+mountPath = "/var/www/html/files"
+
+[[volumes]]
+name = "shopware-theme"
+mountPath = "/var/www/html/public/theme"
+
+[[volumes]]
+name = "shopware-thumbnail"
+mountPath = "/var/www/html/public/thumbnail"
+
+[[volumes]]
+name = "shopware-sitemap"
+mountPath = "/var/www/html/public/sitemap"
