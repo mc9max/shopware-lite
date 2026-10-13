@@ -49,6 +49,11 @@ COPY --chown=33:33 config/packages/railway.yaml /var/www/html/config/packages/ra
 
 EXPOSE 8080
 
+# Sensible defaults baked in (not on the deploy form — one-click stays clean).
+# Users can still override any of these as service variables after deploy.
+ENV TZ="UTC" \
+    TRUSTED_PROXIES="127.0.0.1,10.0.0.0/8"
+
 ENTRYPOINT ["/usr/local/bin/railway-entrypoint.sh"]
 
 LABEL org.opencontainers.image.source="https://github.com/mc9max/shopware-lite"
