@@ -6,7 +6,7 @@ Shopware is the open-source e-commerce platform for running your own online stor
 
 ## About Hosting Shopware
 
-This template deploys Shopware as a single Railway service from a pinned image (`dockware/shopware:6.7.15.1`, Shopware 6.7.15.1, MIT-licensed): PHP 8.4 + Apache + MySQL 8 in one container, no external database to manage. Six Railway volumes hold the MySQL datadir plus media, files, theme, thumbnail, and sitemap directories, so products, orders, customers, and uploads survive redeploys. On boot the wrapper remaps Apache to Railway's `PORT`, rewrites sales-channel URLs to your public domain (https enforced), rotates the default admin password to a generated secret, and warms the production cache. Cron runs Shopware's scheduled tasks and message-queue workers every minute.
+This template deploys Shopware as a single Railway service from a pinned image (`dockware/shopware:6.7.15.1`, Shopware 6.7.15.1, MIT-licensed): PHP 8.4 + Apache + MySQL 8 in one container, no external database to manage. One Railway volume mounted at `/data` holds the MySQL datadir plus media, files, theme, thumbnail, and sitemap directories, so products, orders, customers, and uploads survive redeploys. On boot the wrapper remaps Apache to Railway's `PORT`, rewrites sales-channel URLs to your public domain (https enforced), rotates the default admin password to a generated secret, and warms the production cache. Cron runs Shopware's scheduled tasks and message-queue workers every minute.
 
 ## Why Deploy
 
@@ -25,7 +25,7 @@ This template deploys Shopware as a single Railway service from a pinned image (
 ## Dependencies for Shopware Hosting
 
 - **Railway account** (Hobby or higher; 2 GB RAM recommended — Shopware + MySQL together want headroom).
-- **Six volumes** provisioned automatically: `shopware-mysql`, `shopware-media`, `shopware-files`, `shopware-theme`, `shopware-thumbnail`, `shopware-sitemap`.
+- **One `/data` volume** provisioned automatically (MySQL datadir + media/files/theme/thumbnail/sitemap).
 - **A public domain** — generate one in Railway; the shop rewrites its sales-channel URLs to it on every boot.
 - **Upstream image** `dockware/shopware:6.7.15.1-amd64`, pinned by digest (Shopware is MIT-licensed; the dockware/shopware image repo is MIT-licensed).
 

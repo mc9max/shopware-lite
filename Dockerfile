@@ -8,17 +8,17 @@
 # =============================================================================
 # Why this wrapper:
 #   * Upstream ends with USER dockware (uid 33). Railway mounts persistent
-#     volumes root-owned, so the entrypoint starts as root: it seed-copies the
-#     MySQL datadir into the volume and remaps Apache's port, then drops to
-#     the dockware user (via gosu, which the image ships) to run the upstream
-#     entrypoint exactly as designed.
-#   * The image ships a fully installed Shopware 6 (with demo data) plus its
-#     MySQL 8 datadir INSIDE the image at /var/lib/mysql. A Railway volume
-#     mounted there starts empty and would shadow the pre-installed database,
-#     so the entrypoint seed-copies /seed/mysql into the volume on first boot.
-#   * Web upload dirs (media/files/theme/thumbnail/sitemap) are populated from
-#     the Shopware tarball by the upstream entrypoint on first boot, straight
-#     through the volume mount points — no seeding needed there.
+#     volumes root-owned, so the entrypoint starts as root: it prepares the
+#     /data volume and remaps Apache's port, then drops to the dockware user
+#     (via gosu, which the image ships) to run the upstream entrypoint
+#     exactly as designed.
+#   * Railway services take a single volume, mounted here at /data. The image
+#     ships a fully installed Shopware 6 (with demo data) plus its MySQL 8
+#     datadir INSIDE the image at /var/lib/mysql, so the entrypoint relocates
+#     the datadir to /data/mysql (via my.cnf) and seed-copies the prebuilt
+#     database there on first boot. Web data dirs (media/files/theme/
+#     thumbnail/sitemap) are moved into /data on first boot and symlinked back
+#     into the docroot (Apache follows symlinks), so uploads survive redeploys.
 #   * Upstream Apache listens on port 80. The wrapper rewrites it to Railway's
 #     injected PORT (default 8080) before the upstream entrypoint starts Apache.
 #   * Upstream's SHOP_DOMAIN env rewrites sales-channel URLs on boot; the

@@ -1,8 +1,9 @@
 #!/bin/bash
 # Railway wrapper entrypoint for the dockware/shopware image.
-# Runs as root: remaps Apache to Railway's PORT and seeds the MySQL datadir
-# volume on first boot, then hands off to the upstream entrypoint as the
-# dockware user (via gosu), exactly as the image was designed to run.
+# Runs as root: remaps Apache to Railway's PORT, prepares the single /data
+# volume (MySQL datadir relocation + seed), then hands off to the upstream
+# entrypoint as the dockware user (via gosu), exactly as the image was
+# designed to run.
 set -e
 
 # Railway injects PORT at runtime (default 8080). Upstream Apache listens on
@@ -14,14 +15,27 @@ if [ "$PORT" != "80" ]; then
   echo "RAILWAY: Apache remapped from port 80 to ${PORT}"
 fi
 
-# First boot only: the image ships a fully installed Shopware database in
-# /var/lib/mysql, but the Railway volume mounted there starts empty and would
-# shadow it. Seed-copy the image's datadir into the volume.
-if [ ! -f /var/lib/mysql/ibdata1 ] && [ -f /seed/mysql/ibdata1 ]; then
+# Single-volume layout: everything persistent lives under /data.
+mkdir -p /data/mysql /data/media /data/files /data/theme /data/thumbnail /data/sitemap
+# The upstream entrypoint chowns this path on boot; keep it (now unused by
+# MySQL itself) so that step keeps working.
+mkdir -p /var/lib/mysql
+
+# Relocate the MySQL datadir onto the volume. The image's my.cnf points at
+# /var/lib/mysql, but the Railway volume is mounted at /data.
+if grep -q '^datadir *= /var/lib/mysql' /etc/mysql/my.cnf; then
+  sed -i 's|^datadir *= /var/lib/mysql|datadir = /data/mysql|' /etc/mysql/my.cnf
+  echo "RAILWAY: MySQL datadir relocated to /data/mysql"
+fi
+
+# First boot only: the image ships a fully installed Shopware database; seed
+# it into the volume (an empty volume would otherwise mean an empty shop).
+if [ ! -f /data/mysql/ibdata1 ] && [ -f /seed/mysql/ibdata1 ]; then
   echo "RAILWAY: seeding MySQL datadir into empty volume (first boot)..."
-  cp -a /seed/mysql/. /var/lib/mysql/
+  cp -a /seed/mysql/. /data/mysql/
   echo "RAILWAY: MySQL datadir seeded."
 fi
+chown -R mysql:mysql /data/mysql
 
 # Drop to the dockware user and run the upstream entrypoint as designed
 # (it uses passwordless sudo internally for the privileged steps).

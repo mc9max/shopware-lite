@@ -8,12 +8,12 @@ The open-source e-commerce platform for building your own online store — store
 
 # Deploy and Host
 
-One click. Railway provisions a single service (Shopware + MySQL 8 in one container) with six persistent volumes and starts your shop. The admin password is auto-generated per deployment — find it in the service variables (`SHOPWARE_ADMIN_PASSWORD`), then open `https://<your-domain>/admin` and log in as `admin`.
+One click. Railway provisions a single service (Shopware + MySQL 8 in one container) with one persistent `/data` volume and starts your shop. The admin password is auto-generated per deployment — find it in the service variables (`SHOPWARE_ADMIN_PASSWORD`), then open `https://<your-domain>/admin` and log in as `admin`.
 
 - **Runtime** — PHP 8.4 + Apache + MySQL 8, single container (pinned `dockware/shopware:6.7.15.1` image, Shopware 6.7.15.1, MIT-licensed).
 - **Memory** — ~1 GB at rest; give the service 2 GB for comfortable headroom. Fits Railway Hobby.
 - **Port** — Railway's injected `PORT` (default 8080); the wrapper remaps Apache from port 80 automatically.
-- **Persistence** — MySQL datadir plus media, files, theme, thumbnail, and sitemap directories live on volumes. Survives redeploys and restarts.
+- **Persistence** — one `/data` volume holds the MySQL datadir plus media, files, theme, thumbnail, and sitemap directories. Survives redeploys and restarts.
 - **Public URL** — attach/generate a Railway domain; sales-channel URLs and `APP_URL` are rewritten to it on every boot (https enforced — Railway terminates TLS at the proxy).
 - **Workers** — `SW_TASKS_ENABLED=1` runs Shopware's scheduled tasks and message-queue consumers via cron every minute (order flows, index updates, mail).
 
@@ -34,7 +34,7 @@ One click. Railway provisions a single service (Shopware + MySQL 8 in one contai
 ### Deployment Dependencies
 
 - **Railway Hobby or above** — 2 GB RAM recommended.
-- **Six volumes** (provisioned automatically): `shopware-mysql`, `shopware-media`, `shopware-files`, `shopware-theme`, `shopware-thumbnail`, `shopware-sitemap`.
+- **One `/data` volume** (provisioned automatically) holding the MySQL datadir plus media, files, theme, thumbnail, and sitemap directories.
 - **A public domain** — generate one in Railway; the shop rewrites its URLs to it on boot.
 
 ## First-run setup
