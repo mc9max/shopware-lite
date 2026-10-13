@@ -10,7 +10,7 @@ The open-source e-commerce platform for building your own online store — store
 
 One click. Railway provisions a single service (Shopware + MySQL 8 in one container) with one persistent `/data` volume and starts your shop. The admin password is auto-generated per deployment — find it in the service variables (`SHOPWARE_ADMIN_PASSWORD`), then open `https://<your-domain>/admin` and log in as `admin`.
 
-- **Runtime** — PHP 8.4 + Apache + MySQL 8, single container (pinned `dockware/shopware:6.7.15.1` image, Shopware 6.7.15.1, MIT-licensed).
+- **Runtime** — PHP 8.2 + Apache + MySQL 8, single container (pinned `dockware/shopware:6.7.15.1` image, Shopware 6.7.15.1, MIT-licensed).
 - **Memory** — ~1 GB at rest; give the service 2 GB for comfortable headroom. Fits Railway Hobby.
 - **Port** — Railway's injected `PORT` (default 8080); the wrapper remaps Apache from port 80 automatically.
 - **Persistence** — one `/data` volume holds the MySQL datadir plus media, files, theme, thumbnail, and sitemap directories. Survives redeploys and restarts.
