@@ -1,6 +1,6 @@
 # Deploy and Host Shopware with Railway
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/shopware-latest)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/shopware)
 
 Shopware is the open-source e-commerce platform for running your own online store: storefront, product catalog, cart and checkout, promotions, and a full admin backend. This template deploys Shopware 6.7 with demo data pre-installed — your shop is browsable seconds after the first boot finishes.
 

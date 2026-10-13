@@ -2,7 +2,7 @@
 
 The open-source e-commerce platform for building your own online store — storefront, product catalog, checkout, and admin backend, all self-hosted. This template deploys Shopware 6.7 with demo data pre-installed, so your shop is browsable seconds after the first boot.
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/shopware-latest?utm_campaign=shopware-lite)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/shopware?utm_campaign=shopware-lite)
 
 > The deploy URL slug above is finalized after the template is published; the button always points at the live marketplace listing.
 
