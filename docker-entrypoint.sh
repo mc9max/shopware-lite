@@ -15,6 +15,15 @@ if [ "$PORT" != "80" ]; then
   echo "RAILWAY: Apache remapped from port 80 to ${PORT}"
 fi
 
+# Railway terminates TLS at its edge proxy and forwards plain HTTP without an
+# X-Forwarded-Proto header, so PHP would see every request as http:// and
+# Shopware could never match the https:// sales-channel domain. Force HTTPS
+# for all requests: the public URL is always https on Railway.
+if ! grep -q "SetEnv HTTPS on" /etc/apache2/sites-enabled/000-default.conf; then
+  sed -i "s|<VirtualHost \*:${PORT}>|<VirtualHost *:${PORT}>\n    SetEnv HTTPS on|" /etc/apache2/sites-enabled/000-default.conf
+  echo "RAILWAY: forcing HTTPS in Apache vhost (TLS is terminated at Railway's proxy)"
+fi
+
 # Single-volume layout: everything persistent lives under /data.
 mkdir -p /data/mysql /data/media /data/files /data/theme /data/thumbnail /data/sitemap
 # The upstream entrypoint chowns this path on boot; keep it (now unused by
