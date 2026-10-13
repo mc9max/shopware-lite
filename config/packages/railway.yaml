@@ -1,0 +1,8 @@
+# Railway template: trust Railway's edge proxy.
+# Railway terminates TLS at its proxy and forwards plain HTTP to the
+# container. Without trusted proxies, Symfony sees every request as http://
+# and Shopware can't match the https:// sales-channel domain (400 "Sales
+# Channel Not Found"). TRUSTED_PROXIES is set via the template variables;
+# the default covers Railway's internal proxy IP ranges.
+framework:
+    trusted_proxies: '%env(TRUSTED_PROXIES)%'

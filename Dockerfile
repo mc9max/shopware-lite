@@ -42,6 +42,11 @@ RUN mkdir -p /seed/mysql && cp -a /var/lib/mysql/. /seed/mysql/
 COPY --chmod=0755 docker-entrypoint.sh /usr/local/bin/railway-entrypoint.sh
 COPY --chmod=0755 boot_end.sh /var/www/boot_end.sh
 
+# Trust Railway's edge proxy (TLS is terminated at the proxy; the container
+# sees plain HTTP). Without this, Symfony can't see the original https
+# scheme and Shopware 400s on "Sales Channel Not Found".
+COPY --chown=33:33 config/packages/railway.yaml /var/www/html/config/packages/railway.yaml
+
 EXPOSE 8080
 
 ENTRYPOINT ["/usr/local/bin/railway-entrypoint.sh"]
