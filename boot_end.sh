@@ -7,12 +7,13 @@ set -e
 
 SHOP_DOMAIN="${SHOP_DOMAIN:-localhost}"
 
-# Every boot: force https on sales-channel domains. Railway terminates TLS at
-# its proxy and forwards plain HTTP to the container, so the shop must serve
-# its canonical https:// URLs to avoid mixed-content and redirect issues.
-mysql -h127.0.0.1 -uroot -proot shopware \
-  -e "UPDATE sales_channel_domain SET url = REPLACE(url, 'http://', 'https://');" 2>/dev/null \
-  || echo "RAILWAY: note: sales-channel https rewrite skipped (DB not ready?)"
+# Every boot: drop plain-http sales-channel domains that already have an https
+# twin. Railway terminates TLS at its proxy, so the shop must serve canonical
+# https:// URLs. (An UPDATE would hit the UNIQUE key on url, since the https
+# twin already exists — hence DELETE of the redundant http rows.)
+mysql -h127.0.0.1 -uroot -proot shopware -e \
+  "DELETE h FROM sales_channel_domain h JOIN sales_channel_domain s ON s.url = REPLACE(h.url, 'http://', 'https://') WHERE h.url LIKE 'http://%';" \
+  || echo "RAILWAY: warning: sales-channel http cleanup skipped (DB not ready?)"
 
 # Every boot: keep APP_URL accurate (dockware blanks the old line and appends
 # a new one per boot; normalize to a single correct entry).
