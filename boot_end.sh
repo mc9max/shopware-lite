@@ -20,6 +20,14 @@ mysql -h127.0.0.1 -uroot -proot shopware -e \
 sed -i '/^APP_URL=/d' /var/www/html/.env
 echo "APP_URL=https://${SHOP_DOMAIN}" >> /var/www/html/.env
 
+# Every boot: export TRUSTED_PROXIES via .env. PHP-FPM clears the container
+# environment, so Symfony can't see the real TRUSTED_PROXIES variable;
+# Dotenv makes it visible so %env(TRUSTED_PROXIES)% in config/packages/
+# railway.yaml resolves.
+TP="${TRUSTED_PROXIES:-127.0.0.1,10.0.0.0/8}"
+sed -i '/^TRUSTED_PROXIES=/d' /var/www/html/.env
+echo "TRUSTED_PROXIES=${TP}" >> /var/www/html/.env
+
 # Every boot (idempotent): relocate the web data dirs onto the /data volume.
 # On first boot the upstream entrypoint has just unpacked the Shopware tarball
 # into /var/www/html; move that content into the volume once, then symlink so
